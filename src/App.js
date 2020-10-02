@@ -1,26 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, {Component} from 'react';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import './App.css'
+
+import SearchBox from './components/search-box/search-box.component';
+
+import {CardList} from './components/card-list/card-list.component';
+
+ class App extends Component {
+  constructor(){
+    super();
+
+    this.state = {
+       friends: [],
+       searchField: ''
+    }
+  }
+
+  componentDidMount() {
+    fetch('https://jsonplaceholder.typicode.com/users/')
+    .then(result => result.json())
+    .then(users => this.setState({friends: users}))
+  }
+
+  onSearchChange = (event) => {
+    this.setState({ searchField: event.target.value})
+  }
+
+  render() {
+    const { friends, searchField} = this.state;
+
+    const filteredFriends = friends.filter(friend =>
+      friend.name.toLowerCase().includes(searchField.toLowerCase())
+    );
+
+    return <div className="App"> 
+             <h1>Strange friends</h1>
+              <SearchBox onSearchChange={this.onSearchChange} />
+              <CardList friends={filteredFriends}/> 
+          </div>
+        }
 }
 
 export default App;
